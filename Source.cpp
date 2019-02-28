@@ -52,7 +52,7 @@ quit:
 
 void timer1(int& trackStudy) {
 	std::cout << "OK, go study..." << std::endl;
-	std::this_thread::sleep_for(std::chrono::milliseconds(1/*1500000*/));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1500000));
 	std::cout << "\a" << "You're done!" << std::endl;
 	trackStudy = trackStudy + STUDY;
 	std::cout << "You've studied a total of " << trackStudy << " minutes!\n" << std::endl;
