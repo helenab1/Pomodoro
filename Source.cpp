@@ -1,56 +1,58 @@
-/* This program simulates a pomodoro for two personalized settings: 25 minutes for studying or 10 minutes for meditation.
-It tracks the total amount of time in text file, uses sleep for the timers. */
+/* This program simulates a pomodoro for 25 minutes for studying without a distracting visual countdown.
+It tracks the total amount of time in text file, remembers when you next open it, uses sleep for the timer. */
 #include <iostream>
 #include <fstream>
 #include <thread>
 #include <chrono>
 
 const int STUDY = 25;
-const int MEDITATE = 10;
-int trackStudy, trackMed, selection;
+int trackStudy, selection;
+std::fstream dataFile;
 
-void timer1(int&);
-void timer2(int&);
+void load();
+int menu();
+void timer(int&);
+void quit();
+
 
 int main() {
+	
+	load();
+	selection = menu();
 
-	std::fstream dataFile;
-	dataFile.open("nums.txt", std::ios::in);
-	dataFile >> trackStudy;
-	dataFile >> trackMed;
-	dataFile.close();
-
-start:
-	std::cout << "Please select:\n";
-	std::cout << "(1) Study\n";
-	std::cout << "(2) Meditate\n";
-	std::cout << "(3) Quit\n";
-	std::cin >> selection;
-
-	switch (selection) {
-		case 1: timer1(trackStudy);
-			    break;
-		case 2: timer2(trackMed);
-			    break;
-		case 3: goto quit;
-			    break;
-		default: 
-			    break;
+	while(selection == 1) {
+		timer(trackStudy);
+		selection = menu();
 	}
-	std::cout << "Make sure to select quit when done to keep your time updated.\n";
-	goto start;
 
-quit:
-	dataFile.open("nums.txt", std::ios::out);
-	dataFile << trackStudy << std::endl;
-	dataFile << trackMed << std::endl;
-	dataFile.close();
-
+	if (selection == 2) {
+		quit();
+	}
+	
 	return 0;
 
 }
 
-void timer1(int& trackStudy) {
+int menu() {
+	std::cout << "Please select:\n";
+	std::cout << "(1) Study\n";
+	std::cout << "(2) Quit\n";
+	std::cin >> selection;
+	while (selection < 1 || selection > 2) {
+		std::cout << "Enter a valid selection (1 or 2).";
+		std::cin >> selection;
+	}
+	return selection;
+}
+
+void load() {
+	dataFile.open("nums.txt", std::ios::in);
+	dataFile >> trackStudy;
+	dataFile.close();
+}
+
+
+void timer(int& trackStudy) {
 	std::cout << "OK, go study..." << std::endl;
 	std::this_thread::sleep_for(std::chrono::milliseconds(1500000));
 	std::cout << "\a" << "You're done!" << std::endl;
@@ -58,10 +60,9 @@ void timer1(int& trackStudy) {
 	std::cout << "You've studied a total of " << trackStudy << " minutes!\n" << std::endl;
 }
 
-void timer2(int& trackMed) {
-	std::cout << "OK, close your eyes..." << std::endl;
-	std::this_thread::sleep_for(std::chrono::milliseconds(600000));
-	std::cout << "\a" << "You're done!" << std::endl;
-	trackMed = trackMed + MEDITATE;
-	std::cout << "You've meditated a total of " << trackMed << " minutes!\n" << std::endl;
+void quit() {
+	dataFile.open("nums.txt", std::ios::out);
+	dataFile << trackStudy << std::endl;
+	dataFile.close();
 }
+
