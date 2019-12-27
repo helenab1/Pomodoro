@@ -1,2 +1,2 @@
-# Pomodoros
-Personalized pomodoros for my own use. Tracks time used studying or meditating. 
+# Pomodoro
+A 25-minute study timer with no distracting countdown.
